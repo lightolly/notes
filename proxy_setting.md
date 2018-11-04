@@ -3,6 +3,24 @@
 
 ## eth1作为wan
 
+## 安装代理工具
+    wget https://install.direct/go.sh
+    从https://v2ray.com/download下载安装包
+    ./go.sh --local xxxx 安装
+    修改/etc/v2ray/config.json文件见proxy_setting.json
+    systemctl enable v2ray
+    systemctl start v2ray
+
+## 配置内核参数
+    vim /etc/sysctl.conf
+    net.ipv4.ip_forward=1
+    net.netfilter.nf_conntrack_tcp_timeout_established=7200
+    net.netfilter.nf_conntrack_sctp_timeout_established=7200
+    net.core.default_qdisc=fq
+    net.ipv4.tcp_congestion_control=bbr
+    
+    sysctl -p
+
 ## 开启snat，br0开启dhcp
 
     yum install iptables-service -y
@@ -40,6 +58,7 @@
 将如下自启动项目加入
     ip rule add fwmark 1 table 100
     ip route add local 0.0.0.0/0 dev lo table 100
+
 
 # 使能ipv6透传
     ebtables -t broute -A BROUTING -p ! ipv6 -j DROP -i enp1s0
