@@ -1,7 +1,9 @@
 
-## 创建网桥桥接eth2-eth4
+## 创建网桥br0桥接eth2-eth4
 
 ## eth1作为wan
+
+## br0 使能dhcp 10.0.0.0/24地址池
 
 ## 安装代理工具
     wget https://install.direct/go.sh
@@ -29,7 +31,7 @@
 
 # 透明代理TCP
 
-    iptables -t nat -A POSTROUTING -o enp1s0 -j MASQUERADE
+    iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
     iptables -t nat -N V2RAY
     iptables -t nat -I V2RAY -d 127.0.0.0/8 -j RETURN
     iptables -t nat -I V2RAY -d 服务IP -j RETURN
@@ -61,5 +63,5 @@
 
 
 # 使能ipv6透传
-    ebtables -t broute -A BROUTING -p ! ipv6 -j DROP -i enp1s0
-    brctl addif br0 enp1s0
+    ebtables -t broute -A BROUTING -p ! ipv6 -j DROP -i eth1
+    brctl addif br0 eth1
