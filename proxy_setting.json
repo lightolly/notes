@@ -1,0 +1,139 @@
+{
+  "log": {
+    "loglevel": "warning", 
+    "access": "/var/log/v2ray/access.log", 
+    "error": "/var/log/v2ray/error.log"
+  }, 
+  "inbound": {
+    "sniffing": {
+      "enabled": true, 
+      "destOverride": [
+        "http", 
+        "tls"
+      ]
+    }, 
+    "port": 1080, 
+    "listen": "127.0.0.1", 
+    "protocol": "socks", 
+    "settings": {
+      "auth": "noauth", 
+      "udp": false, 
+      "ip": "127.0.0.1"
+    }
+  }, 
+  "inboundDetour": [
+    {
+      "domainOverride": [
+        "tls", 
+        "http"
+      ], 
+      "port": 12345, 
+      "protocol": "dokodemo-door", 
+      "settings": {
+        "network": "tcp,udp", 
+        "followRedirect": true
+      }
+    }
+  ], 
+  "outbound": {
+    "protocol": "vmess", 
+    "settings": {
+      "vnext": [
+        {
+          "address": "服务器ip", 
+          "port": 端口, 
+          "users": [
+            {
+              "id": "自定义id", 
+              "alterId": 64, 
+              "security": "auto"
+            }
+          ]
+        }
+      ]
+    }, 
+    "tag": "agentout", 
+    "streamSettings": {
+      "network": "tcp", 
+      "security": "", 
+      "sockopt": {
+        "mark": 255
+      }, 
+      "tcpSettings": {
+        "header": {
+          "type": "none"
+        }
+      }
+    }, 
+    "mux": {
+      "enabled": true
+    }
+  }, 
+  "outboundDetour": [
+    {
+      "protocol": "freedom", 
+      "settings": { }, 
+      "tag": "direct", 
+      "streamSettings": {
+        "sockopt": {
+          "mark": 255
+        }
+      }
+    }, 
+    {
+      "protocol": "blackhole", 
+      "settings": { }, 
+      "tag": "block", 
+      "streamSettings": {
+        "sockopt": {
+          "mark": 255
+        }
+      }
+    }
+  ], 
+  "routing": {
+    "strategy": "rules", 
+    "settings": {
+      "domainStrategy": "IPOnDemand", 
+      "rules": [
+        {
+          "domain": [
+            "amazon.com", 
+            "microsoft.com", 
+            "jd.com", 
+            "youku.com", 
+            "baidu.com"
+          ], 
+          "type": "field", 
+          "outboundTag": "direct"
+        }, 
+        {
+          "type": "field", 
+          "outboundTag": "direct", 
+          "domain": [
+            "geosite:cn", 
+            "geosite:speedtest"
+          ]
+        }, 
+        {
+          "type": "field", 
+          "outboundTag": "direct", 
+          "protocol": [
+            "bittorrent"
+          ]
+        }, 
+        {
+          "type": "field", 
+          "outboundTag": "direct", 
+          "ip": [
+            "0.0.0.0/8", 
+            "10.0.0.0/8", 
+            "fc00::/7", 
+            "fe80::/10", 
+            "geoip:cn"
+          ]
+        }
+      ]
+    }
+  }
+}
